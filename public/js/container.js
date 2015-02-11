@@ -71,6 +71,8 @@
                             cn.name = result.name;
                             cn.path = result.path;
                             cn.isTree = result.isTree;
+                            cn._fetched = false;
+                            cn._blob = false;
                             ncn = cn;
                         } else {
                             cn.children = cn.children || [];
