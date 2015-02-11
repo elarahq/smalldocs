@@ -15,9 +15,9 @@ var reduceDotRegExp = regexp.MustCompile("[.]+")
 var sectionRegExp = regexp.MustCompile(`^\[(.*)\]$`)
 var valueRegExp = regexp.MustCompile(`^([^=]+)=([^;#]*)$`)
 
-/**
- * Config is returned when there is a syntax error in an INI file
- */
+//
+// Config is returned when there is a syntax error in an INI file
+//
 type ConfigError struct {
 	Line   int
 	Source string
@@ -27,9 +27,9 @@ func (e *ConfigError) Error() string {
 	return fmt.Sprintf("Invalid INI syntax on line %d: %s", e.Line, e.Source)
 }
 
-/**
- * A section represents a single section of an INI file
- */
+//
+// A section represents a single section of an INI file
+//
 type Section map[string]string
 
 type Config struct {

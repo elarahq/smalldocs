@@ -14,9 +14,9 @@ const (
 	textHTML        = "text/html"
 )
 
-/**
- * Error messages
- */
+//
+// Error messages
+//
 var ErrorMessages = map[int]string{
 	301: "Moved Permanently",
 	304: "Not Modified",
@@ -36,9 +36,9 @@ var ErrorMessages = map[int]string{
 	503: "Service Unavailable",
 }
 
-/**
- * Error response
- */
+//
+// Error response
+//
 type ErrorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -48,18 +48,18 @@ func (this ErrorResponse) Error() string {
 	return fmt.Sprintf("%d %v", this.Code, this.Message)
 }
 
-/**
- * Error Handler
- */
+//
+// Error Handler
+//
 type ErrorHandler struct {
 	Context *context.Context
 	Handler HandleFunc
 }
 
-/**
- * Our error handler type will now satisify http.Handler
- * Errorhandler code
- */
+//
+// Error handler type will now satisify http.Handler
+// Errorhandler code
+//
 func (this *ErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var ctx = this.Context
 	if status, err := this.Handler(ctx, w, r); err != nil || status >= 400 {
@@ -78,8 +78,6 @@ func (this *ErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		// accept type
-
 		msg, ok := ErrorMessages[status]
 		if !ok {
 			status = http.StatusInternalServerError
@@ -93,6 +91,7 @@ func (this *ErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var e error
+		// accept type
 		accept := r.Header.Get("Accept")
 		switch accept {
 		case applicationJson:

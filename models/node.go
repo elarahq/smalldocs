@@ -2,12 +2,12 @@ package models
 
 import ()
 
-/**
- *  Node
- *  ====
- *  Represents a single node. I can be subtopic or topic.
- *  Each node will have `Name`, `Children`, and ``
- */
+//
+//  Node
+//  ====
+//  Represents a single node. I can be subtopic or topic.
+//  Each node will have `Name`, `Children`
+//
 type Node struct {
 	Name   string `json:"name"`
 	IsTree bool   `json:"isTree"`

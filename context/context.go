@@ -76,9 +76,9 @@ func (this *Context) JSON(w http.ResponseWriter, data interface{}) error {
 	return nil
 }
 
-/**
- * Send json to response
- */
+//
+// Send json to response
+//
 func (this *Context) Text(w http.ResponseWriter, data []byte) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write(data)
