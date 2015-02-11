@@ -8,8 +8,10 @@ import (
 
 // Index handler
 func Index(context *ctx.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
-	if r.URL.Path != "/" {
-		return http.StatusNotFound, nil
-	}
 	return 200, context.RenderTemplate(w, "index", nil)
+}
+
+// Not found handler
+func NotFound(context *ctx.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
+	return 404, nil
 }

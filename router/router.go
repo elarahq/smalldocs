@@ -8,7 +8,8 @@ import (
 // Route struct
 type Route struct {
 	name    string         // Name of route
-	pattern *regexp.Regexp // Pattern of route
+	regexp  *regexp.Regexp // Regexp for route
+	pattern string         // Pattern of route
 	method  string         // Method of route: GET/POST/PUT/DELETE
 	handler http.Handler   // HTTP Handler of route
 }
@@ -21,18 +22,22 @@ func (this *Route) Method() string {
 	return this.method
 }
 
-func (this *Route) Pattern() *regexp.Regexp {
+func (this *Route) Pattern() string {
 	return this.pattern
 }
 
+func (this *Route) MatchMethod(method string) bool {
+	return this.method == "" || this.method == method || (method == "HEAD" && this.method == "GET")
+}
+
 func (this *Route) Match(r *http.Request) bool {
-	return (this.method == "" || this.method == r.Method) &&
-		(this.pattern == nil || this.pattern.MatchString(r.URL.Path))
+	return this.MatchMethod(r.Method) && this.regexp.MatchString(r.URL.Path)
 }
 
 // Router struct
 type Router struct {
-	routes []*Route // All routes
+	routes   []*Route     // All routes
+	notFound http.Handler // not found handler
 }
 
 func (this *Router) Get(pattern string, handler http.Handler) *Router {
@@ -63,11 +68,17 @@ func (this *Router) HandleFunc(pattern string, handler func(http.ResponseWriter,
 	return this.AddRoute("", pattern, http.HandlerFunc(handler))
 }
 
+func (this *Router) NotFound(handler http.Handler) *Router {
+	this.notFound = handler
+	return this
+}
+
 func (this *Router) AddRoute(method, pattern string, handler http.Handler) *Router {
 	route := new(Route)
-	route.pattern = regexp.MustCompile(pattern)
+	route.pattern = pattern
 	route.method = method
 	route.handler = handler
+	route.regexp = regexp.MustCompile(pattern)
 	this.routes = append(this.routes, route)
 	return this
 }
@@ -79,29 +90,9 @@ func (this *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	if this.notFound != nil {
+		this.notFound.ServeHTTP(w, r)
+	} else {
+		http.NotFound(w, r)
+	}
 }
-
-// func (this *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-// 	for _, route := range this.routes {
-// 		if route.Match(r) {
-// 			println(r.URL.Path)
-// 			eachHandler(w, r, route.handlers)
-// 			return
-// 		}
-// 	}
-// 	// no pattern matched; send 404 response
-// 	eachHandler(w, r, this.notFound)
-// }
-//
-// func eachHandler(w http.ResponseWriter, r *http.Request, handlers []Handler) {
-// 	l := len(handlers)
-// 	if l < 1 {
-// 		return
-// 	} else if l == 1 {
-// 		handlers[0](w, r, func() {})
-// 		return
-// 	}
-// 	handlers[0](w, r, func() {
-// 		eachHandler(w, r, handlers[1:])
-// 	})
-// }
