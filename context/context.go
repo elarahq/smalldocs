@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/jdkanani/smalldocs/config"
+	"labix.org/v2/mgo"
 )
 
 // context for application
@@ -20,6 +21,9 @@ type Context struct {
 
 	// configuration
 	Config *config.Config
+
+	// mongodb session
+	DBSession *mgo.Session
 }
 
 // render template
