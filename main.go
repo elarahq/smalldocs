@@ -14,31 +14,20 @@ import (
 
 	"github.com/jdkanani/smalldocs/controllers"
 	"github.com/jdkanani/smalldocs/handlers"
+	"github.com/jdkanani/smalldocs/models"
 	"github.com/jdkanani/smalldocs/router"
 	"github.com/jdkanani/smalldocs/utils"
 
 	"labix.org/v2/mgo"
 )
 
-// App configuration
-var Config *cfg.Config
-
-func main() {
-	// get current directory
-	root, err := os.Getwd()
-	utils.Check(err)
-
-	// load configuration
-	Config = new(cfg.Config)
-	err = Config.Load(filepath.Join(root, "config.ini"))
-	utils.Check(err)
-
+func DBInit(config *cfg.Config) *mgo.Session {
 	// Mongodb connection
 	// We need this object to establish a session to our MongoDB.
 	mongoDBDialInfo := &mgo.DialInfo{
-		Addrs:    strings.Split(Config.Get("db.hosts"), ","),
+		Addrs:    strings.Split(config.Get("db.hosts"), ","),
 		Timeout:  60 * time.Second,
-		Database: Config.Get("db.database"),
+		Database: config.Get("db.database"),
 		// Username: Config.Get("db.username"),
 		// Password: Config.Get("db.password"),
 	}
@@ -51,15 +40,31 @@ func main() {
 	}
 	mongoSession.SetMode(mgo.Monotonic, true)
 
+	// Project init
+	models.ProjectInit(mongoSession, config)
+
+	return mongoSession
+}
+
+func main() {
+	// get current directory
+	root, err := os.Getwd()
+	utils.Check(err)
+
+	// load configuration
+	config := new(cfg.Config)
+	err = config.Load(filepath.Join(root, "config.ini"))
+	utils.Check(err)
+
 	// add root directory to config
-	Config.Set("app.root", root)
-	Config.Set("app.templates", filepath.Join(root, Config.Get("app.templates")))
-	Config.Set("app.static", filepath.Join(root, Config.Get("app.static")))
+	config.Set("app.root", root)
+	config.Set("app.templates", filepath.Join(root, config.Get("app.templates")))
+	config.Set("app.static", filepath.Join(root, config.Get("app.static")))
 
 	// context
 	context := &ctx.Context{
-		Config:    Config,
-		DBSession: mongoSession,
+		Config:    config,
+		DBSession: DBInit(config),
 	}
 
 	var AppHandlerFunc = func(fn handlers.HandleFunc) http.Handler {
@@ -74,17 +79,23 @@ func main() {
 
 	// router
 	mux := new(router.Router)
-	mux.Get("/$", AppHandlerFunc(controllers.Index))
-	mux.Get("/projects$", AppHandlerFunc(controllers.ProjectIndex))
-	mux.Get("/projects/all$", AppHandlerFunc(controllers.GetProjects))
-
 	mux.NotFound(AppHandlerFunc(controllers.NotFound))
+
+	mux.Get("/$", AppHandlerFunc(controllers.Index))
+
+	// projects routes
+	mux.Get("/projects/?$", AppHandlerFunc(controllers.ProjectIndex))
+	mux.Get("/projects/all/?$", AppHandlerFunc(controllers.GetAllProjects))
+	mux.Post("/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
+	mux.Post("/projects/?$", AppHandlerFunc(controllers.PostProject))
+	mux.Put("/projects/?$", AppHandlerFunc(controllers.SaveProject))
+	mux.Delete("/projects/?$", AppHandlerFunc(controllers.DeleteProject))
 
 	// add router to http handle
 	http.Handle("/", mux)
 
 	// Start server
-	serverURL := Config.Get("server.host") + Config.Get("server.port")
+	serverURL := config.Get("server.host") + config.Get("server.port")
 	fmt.Printf("Listening on %s ...", serverURL)
 	log.Fatal(http.ListenAndServe(serverURL, nil))
 }

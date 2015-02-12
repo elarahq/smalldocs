@@ -18,6 +18,16 @@ pre.prettyprint > code {
     background: none;
 }
 
+.padding-bottom-10 {
+    padding-bottom: 10px;
+}
+
+.no-list {
+    padding: 20px 10px;
+    font-size: 18px;
+    color: #CCC;
+}
+
 /* new/edit label */
 .new-add a,
 .edit-add a{

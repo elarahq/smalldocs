@@ -84,7 +84,6 @@ func (this *ErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			msg, _ = ErrorMessages[status]
 		}
 
-		w.WriteHeader(status)
 		em := ErrorResponse{
 			Code:    status,
 			Message: msg,
@@ -93,10 +92,12 @@ func (this *ErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		var e error
 		// accept type
 		accept := r.Header.Get("Accept")
-		switch accept {
-		case applicationJson:
-			e = ctx.JSON(w, em)
+		switch {
+		case accept == applicationJson:
+		case ctx.IsAjax(r):
+			e = ctx.ErrorJSON(w, em, status)
 		default:
+			w.WriteHeader(status)
 			e = ctx.RenderTemplate(w, "error", em.Error())
 		}
 
