@@ -96,3 +96,8 @@ func ReadJson(r *http.Request, v interface{}) error {
 	}
 	return json.Unmarshal(body, v)
 }
+
+// Checks if request is ajax request
+func IsAjax(r *http.Request) bool {
+	return r.Header.Get("X-Requested-With") == "XMLHttpRequest"
+}

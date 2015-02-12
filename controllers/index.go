@@ -8,7 +8,7 @@ import (
 
 // Index handler
 func Index(context *ctx.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
-	return 200, context.RenderTemplate(w, "index", nil)
+	return 200, context.RenderTemplate(w, "index", "")
 }
 
 // Not found handler

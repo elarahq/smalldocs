@@ -75,6 +75,9 @@ func main() {
 	// router
 	mux := new(router.Router)
 	mux.Get("/$", AppHandlerFunc(controllers.Index))
+	mux.Get("/projects$", AppHandlerFunc(controllers.ProjectIndex))
+	mux.Get("/projects/all$", AppHandlerFunc(controllers.GetProjects))
+
 	mux.NotFound(AppHandlerFunc(controllers.NotFound))
 
 	// add router to http handle
