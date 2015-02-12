@@ -10,6 +10,7 @@
             return {
                 projects: null,
                 adding: false,
+                saving: false,
 
                 // new project
                 title: "",
@@ -26,6 +27,7 @@
             });
         },
 
+        // Check duplicate title
         titleCheck: function() {
             var timeoutId = this.titleCheck.timeoutId;
             timeoutId && clearTimeout(timeoutId);
@@ -51,6 +53,41 @@
                     }.bind(this)
                 });
             }.bind(this), 500);
+        },
+
+        // Save project
+        saveProject: function(){
+            var xhr = this.saveProject.xhr;
+            xhr && xhr.abort && xhr.abort();
+
+            this.setState({saving: true});
+            this.saveProject.xhr = $.ajax({
+                url: this.props.post,
+                method: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    title: this.state.title,
+                    description: this.state.description,
+                    name: this.state.name,
+                }),
+                success: function(result){
+                    this.state.projects = this.state.projects || [];
+                    this.state.projects.push(result);
+                    this.setState({
+                        adding: false,
+                        saving: false,
+                        name: "",
+                        description: "",
+                        title: ""
+                    });
+                }.bind(this),
+                error: function() {
+                    this.setState({
+                        saving: false
+                    });
+                }.bind(this)
+            });
         },
 
         componentDidMount: function() {
@@ -117,7 +154,7 @@
                 </div>
 
             var helpCN = "help-block " + (!!this.state.name ? "" : "hide");
-            var btnDisabled = (!!this.state.title && !!this.state.name) ? "" : "disabled";
+            var btnDisabled = (!!this.state.title && !!this.state.name && !this.state.saving) ? "" : "disabled";
             var newForm =
                 <div className="clearfix">
                     <form role="form">
@@ -132,7 +169,7 @@
                         </div>
                         <div className="form-group pull-right clearfix">
                             <button className="btn btn-default" type="button" onClick={this.cancelAdding}>Cancel</button>&nbsp;
-                            <button className="btn btn-info" disabled={btnDisabled}>Create project</button>
+                            <button className="btn btn-info" disabled={btnDisabled} onClick={this.saveProject}>Create project</button>
                         </div>
                     </form>
                 </div>

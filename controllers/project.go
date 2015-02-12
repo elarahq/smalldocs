@@ -103,12 +103,21 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 
 	collection := session.DB(db).C("projects")
 
-	var projects []models.Project = make([]models.Project, 0)
-	if err := collection.Find(nil).All(&projects); err != nil {
+	var project = new(models.Project)
+	if err := context.ReadJson(r, project); err != nil {
 		return 500, err
 	}
 
-	return 200, context.JSON(w, &projects)
+	project.Name = utils.FormatName(project.Title)
+	if project.Name == "" {
+		return 412, fmt.Errorf("Invalid title for project!")
+	}
+
+	if err := collection.Insert(project); err != nil {
+		return 500, err
+	}
+
+	return 200, context.JSON(w, &project)
 }
 
 //
@@ -123,12 +132,21 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 
 	collection := session.DB(db).C("projects")
 
-	var projects []models.Project = make([]models.Project, 0)
-	if err := collection.Find(nil).All(&projects); err != nil {
+	var project = new(models.Project)
+	if err := context.ReadJson(r, project); err != nil {
 		return 500, err
 	}
 
-	return 200, context.JSON(w, &projects)
+	project.Name = utils.FormatName(project.Title)
+	if project.Name == "" {
+		return 412, fmt.Errorf("Invalid title for project!")
+	}
+
+	if err := collection.Insert(project); err != nil {
+		return 500, err
+	}
+
+	return 200, context.JSON(w, &project)
 }
 
 //
