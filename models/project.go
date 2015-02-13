@@ -3,7 +3,6 @@ package models
 import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	"time"
 
 	cfg "github.com/jdkanani/smalldocs/config"
 )
@@ -16,7 +15,7 @@ type Project struct {
 	Name        string        `json:"name" bson:"name"`
 	Description string        `json:"description" bson:"description"`
 	Title       string        `json:"title" bson:"title"`
-	Timestamp   time.Time
+	Timestamp   int64         `json:"timestamp" bson:"timestamp"`
 }
 
 func ProjectInit(dbSession *mgo.Session, config *cfg.Config) error {

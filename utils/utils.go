@@ -5,12 +5,15 @@ import (
 	"strings"
 )
 
-var SPACES = regexp.MustCompile(" +")
+// Regexp to remove special character
+var SLUGIFY = regexp.MustCompile(`[^a-zA-Z0-9\.-]+`)
 
-/**
- * Get formatted name from string
- */
-func FormatName(str string) string {
+//
+// Get formatted name from string
+//
+func Slug(str string) string {
+	str = SLUGIFY.ReplaceAllString(str, " ")
 	str = strings.ToLower(strings.Trim(str, " "))
-	return SPACES.ReplaceAllString(str, "-")
+	str = strings.Replace(str, " ", "-", -1)
+	return str
 }

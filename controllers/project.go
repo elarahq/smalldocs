@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	ctx "github.com/jdkanani/smalldocs/context"
 	"github.com/jdkanani/smalldocs/models"
@@ -36,7 +37,7 @@ func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) 
 		return 412, fmt.Errorf("Title is required")
 	}
 
-	name := utils.FormatName(title)
+	name := utils.Slug(title)
 	collection := session.DB(db).C("projects")
 	count, err := collection.Find(bson.M{"name": name}).Count()
 	if err != nil || count > 0 || name == "" {
@@ -108,7 +109,8 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
-	project.Name = utils.FormatName(project.Title)
+	project.Name = utils.Slug(project.Title)
+	project.Timestamp = time.Now().Unix()
 	if project.Name == "" {
 		return 412, fmt.Errorf("Invalid title for project!")
 	}
@@ -137,7 +139,7 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
-	project.Name = utils.FormatName(project.Title)
+	project.Name = utils.Slug(project.Title)
 	if project.Name == "" {
 		return 412, fmt.Errorf("Invalid title for project!")
 	}
