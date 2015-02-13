@@ -109,6 +109,7 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
+	project.Title = utils.Title(project.Title)
 	project.Name = utils.Slug(project.Title)
 	project.Timestamp = time.Now().Unix()
 	if project.Name == "" {
@@ -141,6 +142,7 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
+	project.Title = utils.Title(project.Title)
 	project.Name = utils.Slug(project.Title)
 	if project.Name == "" {
 		return 412, fmt.Errorf("Invalid title for project!")
