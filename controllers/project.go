@@ -65,7 +65,7 @@ func GetAllProjects(context *ctx.Context, w http.ResponseWriter, r *http.Request
 	collection := session.DB(db).C("projects")
 
 	var projects []models.Project = make([]models.Project, 0)
-	if err := collection.Find(nil).All(&projects); err != nil {
+	if err := collection.Find(nil).Sort("-timestamp").All(&projects); err != nil {
 		return 500, err
 	}
 
@@ -115,11 +115,13 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 412, fmt.Errorf("Invalid title for project!")
 	}
 
+	id := bson.NewObjectId()
+	project.ID = id
 	if err := collection.Insert(project); err != nil {
 		return 500, err
 	}
 
-	return 200, context.JSON(w, &project)
+	return 200, context.JSON(w, project)
 }
 
 //
@@ -144,11 +146,20 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 412, fmt.Errorf("Invalid title for project!")
 	}
 
-	if err := collection.Insert(project); err != nil {
+	query := bson.M{"_id": project.ID}
+	change := bson.M{"$set": bson.M{
+		"name":        project.Name,
+		"title":       project.Title,
+		"description": project.Description,
+		"timestamp":   time.Now().Unix(),
+	},
+	}
+
+	if err := collection.Update(query, change); err != nil {
 		return 500, err
 	}
 
-	return 200, context.JSON(w, &project)
+	return 200, context.JSON(w, project)
 }
 
 //

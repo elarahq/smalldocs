@@ -11,7 +11,7 @@ import (
 //  Project: Represents a single project
 //
 type Project struct {
-	ID          bson.ObjectId `bson:"_id,omitempty"`
+	ID          bson.ObjectId `json:"id" bson:"_id,omitempty"`
 	Name        string        `json:"name" bson:"name"`
 	Description string        `json:"description" bson:"description"`
 	Title       string        `json:"title" bson:"title"`

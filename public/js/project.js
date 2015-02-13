@@ -73,7 +73,7 @@
                 }),
                 success: function(result){
                     this.state.projects = this.state.projects || [];
-                    this.state.projects.push(result);
+                    this.state.projects.unshift(result);
                     this.setState({
                         adding: false,
                         saving: false,
