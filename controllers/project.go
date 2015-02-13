@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"time"
 
 	ctx "github.com/jdkanani/smalldocs/context"
@@ -18,6 +19,38 @@ import (
 func ProjectIndex(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 	return 301, nil
+}
+
+// get Project by id
+func ProjectById(context *ctx.Context, id string) (*models.Project, error) {
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+
+	var project = new(models.Project)
+	collection := session.DB(db).C("projects")
+	if err := collection.FindId(id).One(project); err != nil {
+		return nil, err
+	}
+	return project, nil
+}
+
+// get Project by name
+func ProjectByName(context *ctx.Context, name string) (*models.Project, error) {
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+
+	var project = new(models.Project)
+	collection := session.DB(db).C("projects")
+	if err := collection.Find(bson.M{"name": name}).One(project); err != nil {
+		return nil, err
+	}
+	return project, nil
 }
 
 //
@@ -76,16 +109,10 @@ func GetAllProjects(context *ctx.Context, w http.ResponseWriter, r *http.Request
 // Get project by Id
 //
 func GetProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	var db = context.Config.Get("db.database")
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
 
-	// get mongodb session
-	session := context.DBSession.Copy()
-	defer session.Close()
-
-	collection := session.DB(db).C("projects")
-
-	var project models.Project
-	if err := collection.FindId("").One(&project); err != nil {
+	project, err := ProjectByName(context, params["pname"])
+	if err != nil {
 		return 500, err
 	}
 
@@ -129,21 +156,20 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 // Save project id
 //
 func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	var db = context.Config.Get("db.database")
-
-	// get mongodb session
-	session := context.DBSession.Copy()
-	defer session.Close()
-
-	collection := session.DB(db).C("projects")
-
-	var project = new(models.Project)
-	if err := context.ReadJson(r, project); err != nil {
+	userProject := new(models.Project)
+	if err := context.ReadJson(r, userProject); err != nil {
 		return 500, err
 	}
 
-	project.Title = utils.Title(project.Title)
-	project.Name = utils.Slug(project.Title)
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
+	project, err := ProjectByName(context, params["pname"])
+	if err != nil {
+		return 500, err
+	}
+
+	project.Title = utils.Title(userProject.Title)
+	project.Name = utils.Slug(userProject.Title)
+	project.Description = userProject.Description
 	if project.Name == "" {
 		return 412, fmt.Errorf("Invalid title for project!")
 	}
@@ -157,6 +183,13 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 	},
 	}
 
+	// get mongo database
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+	collection := session.DB(db).C("projects")
 	if err := collection.Update(query, change); err != nil {
 		return 500, err
 	}
@@ -168,13 +201,17 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 // Delete project by id
 //
 func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
+	project, err := ProjectByName(context, params["pname"])
+	if err != nil {
+		return 500, err
+	}
+
 	var db = context.Config.Get("db.database")
 
 	// get mongodb session
 	session := context.DBSession.Copy()
 	defer session.Close()
-
-	project := new(models.Project)
 
 	// remove project from collection
 	collection := session.DB(db).C("projects")

@@ -136,7 +136,8 @@
                 projects =
                     <div className="list-group">{
                         this.state.projects.map(function(project, key) {
-                            return (<a href="/" className="list-group-item text-capitalize" key={key}>
+                            var url = "/docs/" + project.name;
+                            return (<a href={url} className="list-group-item text-capitalize" key={key}>
                                 <h4 className="list-group-item-heading">{project.title}</h4>
                                 <p className="list-group-item-text">{project.description}</p>
                             </a>);

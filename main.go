@@ -77,6 +77,9 @@ func main() {
 	// static content handler
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
 
+	// slug regexp
+	slug := `[a-zA-Z0-9\.-]+`
+
 	// router
 	mux := new(router.Router)
 	mux.NotFound(AppHandlerFunc(controllers.NotFound))
@@ -88,8 +91,11 @@ func main() {
 	mux.Get("/projects/all/?$", AppHandlerFunc(controllers.GetAllProjects))
 	mux.Post("/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
 	mux.Post("/projects/?$", AppHandlerFunc(controllers.PostProject))
-	mux.Put("/projects/?$", AppHandlerFunc(controllers.SaveProject))
-	mux.Delete("/projects/?$", AppHandlerFunc(controllers.DeleteProject))
+	mux.Put("/projects/"+slug+"/?$", AppHandlerFunc(controllers.SaveProject))
+	mux.Delete("/projects/"+slug+"/?$", AppHandlerFunc(controllers.DeleteProject))
+
+	// docs routes
+	mux.Get("/docs/"+slug+"/?$", AppHandlerFunc(controllers.DocumentIndex))
 
 	// add router to http handle
 	http.Handle("/", mux)
