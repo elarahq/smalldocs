@@ -67,7 +67,7 @@
                 contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify({
-                    title: this.state.title
+                    title: this.state.title,
                     description: this.state.description,
                     name: this.state.name,
                 }),
