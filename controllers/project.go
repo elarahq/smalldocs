@@ -172,12 +172,13 @@ func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request)
 	session := context.DBSession.Copy()
 	defer session.Close()
 
-	collection := session.DB(db).C("projects")
+	project := new(models.Project)
 
-	var projects []models.Project = make([]models.Project, 0)
-	if err := collection.Find(nil).All(&projects); err != nil {
+	// remove project from collection
+	collection := session.DB(db).C("projects")
+	if err := collection.RemoveId(project.ID); err != nil {
 		return 500, err
 	}
 
-	return 200, context.JSON(w, &projects)
+	return 200, context.JSON(w, project)
 }
