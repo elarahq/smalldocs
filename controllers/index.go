@@ -8,6 +8,7 @@ import (
 
 // Slug regxp string
 const SLUG = `[a-zA-Z0-9\.-]+`
+const ID = `[a-fA-F\d]{24}`
 
 // Index handler
 func Index(context *ctx.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {

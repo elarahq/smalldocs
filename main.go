@@ -78,7 +78,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
 
 	// slug regexp
-	slug := `[a-zA-Z0-9\.-]+`
+	slug := controllers.SLUG
+	id := controllers.ID
 
 	// router
 	mux := new(router.Router)
@@ -89,6 +90,8 @@ func main() {
 	// projects routes
 	mux.Get("/projects/?$", AppHandlerFunc(controllers.ProjectIndex))
 	mux.Get("/projects/all/?$", AppHandlerFunc(controllers.GetAllProjects))
+	mux.Get("/projects/"+id+"/?$", AppHandlerFunc(controllers.GetProject))
+	mux.Get("/projects/"+slug+"/settings/?$", AppHandlerFunc(controllers.ProjectSetting))
 	mux.Post("/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
 	mux.Post("/projects/?$", AppHandlerFunc(controllers.PostProject))
 	mux.Put("/projects/"+slug+"/?$", AppHandlerFunc(controllers.SaveProject))

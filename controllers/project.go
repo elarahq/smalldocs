@@ -109,11 +109,11 @@ func GetAllProjects(context *ctx.Context, w http.ResponseWriter, r *http.Request
 // Get project by Id
 //
 func GetProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
 
-	project, err := ProjectByName(context, params["pname"])
+	project, err := ProjectById(context, params["pid"])
 	if err != nil {
-		return 500, err
+		return 404, err
 	}
 
 	return 200, context.JSON(w, project)
@@ -164,7 +164,7 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
 	project, err := ProjectByName(context, params["pname"])
 	if err != nil {
-		return 500, err
+		return 404, err
 	}
 
 	project.Title = utils.Title(userProject.Title)
@@ -204,7 +204,7 @@ func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request)
 	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
 	project, err := ProjectByName(context, params["pname"])
 	if err != nil {
-		return 500, err
+		return 404, err
 	}
 
 	var db = context.Config.Get("db.database")
@@ -220,4 +220,18 @@ func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request)
 	}
 
 	return 200, context.JSON(w, project)
+}
+
+//
+// Project settings
+//
+func ProjectSetting(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/settings/?$`))
+
+	project, err := ProjectByName(context, params["pname"])
+	if err != nil {
+		return 404, err
+	}
+
+	return 200, context.RenderTemplate(w, "projectSettings", &project)
 }

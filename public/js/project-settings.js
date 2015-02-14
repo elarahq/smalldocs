@@ -3,16 +3,14 @@
     var app = root.app;
 
     // Project view
-    var Projects = app.Projects = React.createClass({
-        displayName: "Projects",
+    var ProjectSettings = app.ProjectSettings = React.createClass({
+        displayName: "ProjectSettings",
 
         getInitialState: function(){
             return {
-                projects: null,
-                adding: false,
                 saving: false,
 
-                // new project
+                // project
                 title: "",
                 description: "",
                 name: "",
@@ -22,7 +20,7 @@
         // Fetch projects
         fetch: function() {
             return $.ajax({
-                url: this.props.source,
+                url: this.props.source.replace("ID", $('body').data("id")),
                 method: "GET"
             });
         },
@@ -75,7 +73,6 @@
                     this.state.projects = this.state.projects || [];
                     this.state.projects.unshift(result);
                     this.setState({
-                        adding: false,
                         saving: false,
                         name: "",
                         description: "",
@@ -93,25 +90,9 @@
         componentDidMount: function() {
             this.fetch().success(function(result) {
                 if (this.isMounted()) {
-                    this.setState({
-                        projects: result
-                    });
+                    this.setState(result);
                 }
             }.bind(this));
-        },
-
-        cancelAdding: function(){
-            this.setState({
-                adding: false
-            });
-        },
-
-        startAdding: function(){
-            this.setState({
-                adding: true
-            }, function(){
-                this.refs.theTitle.getDOMNode().focus();
-            });
         },
 
         titleChange: function(e){
@@ -130,65 +111,32 @@
         },
 
         render: function() {
-            var projects = null;
-
-            if (this.state.projects && this.state.projects.length) {
-                projects =
-                    <div className="list-group">{
-                        this.state.projects.map(function(project, key) {
-                            var url = "/docs/" + project.name;
-                            return (<a href={url} className="list-group-item" key={key}>
-                                <h4 className="list-group-item-heading text-capitalize">{project.title}</h4>
-                                <p className="list-group-item-text">{project.description}</p>
-                            </a>);
-                        })}
-                    </div>
-            } else {
-                projects =
-                    <div className="no-list text-center">
-                        No projects
-                    </div>
-            }
-
-            var newButton =
-                <div className="clearfix padding-bottom-10">
-                    <button className="pull-right btn btn-info" onClick={this.startAdding}>+ Create New</button>
-                </div>
-
             var helpCN = "help-block " + (!!this.state.name ? "" : "hide");
             var btnDisabled = (!!this.state.title && !!this.state.name && !this.state.saving) ? "" : "disabled";
-            var newForm =
-                <div className="clearfix">
-                    <form role="form">
-                        <div className="form-group">
-                            <label className="text-muted">Title</label>
-                            <input ref="theTitle" type="text" className="form-control" value={this.state.title} onChange={this.titleChange}/>
-                            <p className={helpCN}>This project will be created as <b className="text-info">{this.state.name}</b></p>
-                        </div>
-                        <div className="form-group">
-                            <label className="text-muted">Description (optional)</label>
-                            <input type="text" className="form-control" onChange={this.descChange}/>
-                        </div>
-                        <div className="form-group pull-right clearfix">
-                            <button className="btn btn-default" type="button" onClick={this.cancelAdding}>Cancel</button>&nbsp;
-                            <button className="btn btn-info" disabled={btnDisabled} onClick={this.saveProject}>Create project</button>
-                        </div>
-                    </form>
-                </div>
+            var form =
+                <form role="form">
+                    <div className="form-group">
+                        <label className="text-muted">Title</label>
+                        <input ref="theTitle" type="text" className="form-control" value={this.state.title} onChange={this.titleChange}/>
+                        <p className={helpCN}>This project will be created as <b className="text-info">{this.state.name}</b></p>
+                    </div>
+                    <div className="form-group">
+                        <label className="text-muted">Description (optional)</label>
+                        <input type="text" className="form-control" value={this.state.description} onChange={this.descChange}/>
+                    </div>
+                    <div className="form-group pull-right clearfix">
+                        <a href="/" className="btn btn-default">Cancel</a>&nbsp;
+                        <button className="btn btn-info" disabled={btnDisabled} onClick={this.saveProject}>Save project</button>
+                    </div>
+                </form>
 
-            return (
-                <div>
-                    {!this.state.adding?newButton:null}
-                    {this.state.adding?newForm:null}
-                    {projects}
-                </div>
-            );
+            return (<div>{form}</div>);
         }
     });
 
-    // Load and show all projects
+    // Load project settings
     React.render(
-        <Projects source="/projects/all" post="/projects" check="/projects_check"/>,
-        document.getElementById('projects')
+        <ProjectSettings source="/projects/ID" put="/projects/ID" check="/projects_check"/>,
+        document.getElementById('settings')
     );
 })(this);
