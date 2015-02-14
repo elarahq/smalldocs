@@ -52,21 +52,9 @@ pre.prettyprint > code {
     box-shadow: 0 1px 3px rgba(0,0,0,0.075);
 }
 
-
-/* new/edit label */
-.new-add a,
-.edit-add a{
-    text-decoration: none;
-}
-
-.edit-add:before {
-    content: "\203a" !important;
-}
-
-.documention-label {
-}
-
-/* Directory view */
+/**
+ * Directory view
+ */
 .directory {
     height: 100%;
     border: 1px solid #F5F5F5;
@@ -75,49 +63,37 @@ pre.prettyprint > code {
     text-transform: capitalize;
 }
 
-/* the tree node's style */
-.tree-view {
+
+/**
+ *  Topic list
+ */
+.topic-list {
     overflow-y: hidden;
-    background-color: #FAFAFA;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.075);
+    border: 1px solid #EEE;
 }
 
-.tree-view.collapsed {
-    background-color: #FFF;
-}
-
-/* style for the container */
-.tree-view-children {
-    padding-left: 10px;
-}
-
-.tree-view.collapsed .tree-view-children {
+.topic.collapsed .page-list {
     height: 0px;
+    display: none;
 }
 
-.tree-view-label {
+.topic-text,
+.page-text {
     padding: 10px;
-    border-bottom: 1px solid #F5F5F5;
+    border-bottom: 1px solid #EEE;
     cursor: pointer;
-    letter-spacing: .05rem;
 }
 
-.tree-view-tree .tree-view-label {
-    text-transform: uppercase;
-    font-weight: bold;
-    color: #222;
-}
-
-.tree-view-blob .tree-view-label {
-    font-weight: normal;
-    border-right: 0px;
-    text-transform: capitalize;
-    font-size: 13px;
-}
-
-.tree-view-label:hover {
+.topic-text {
     background-color: #FAFAFA;
 }
 
+.page.active .page-text {
+    border-right: 5px solid #337ab7;
+    background-color: #337ab7;
+    color: #FFF;
+}
 
 /* Breadcrumb */
 .breadcrumb {

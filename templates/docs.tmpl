@@ -16,16 +16,10 @@
   <body data-id="{{.project.ID.Hex}}">
     {{template "navbar" .}}
     <div class="container">
-      <div class="row">
+      <div class="row" id="docs">
         <div class="col-sm-3 col-md-2">
         </div>
-        <div class="col-sm-9">
-          <h3 class="text-capitalize">
-            {{.project.Title}}
-          </h3>
-          <hr/>
-          <div id="settings">
-          </div>
+        <div class="col-sm-9 col-md-10">
         </div>
       </div>
     </div>
@@ -36,6 +30,9 @@
 
     <!-- app -->
     <script src="/static/build/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/page.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/topic.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/topic-list.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/build/docs.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>
