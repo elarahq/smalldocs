@@ -85,6 +85,16 @@
             });
         },
 
+        deleteProject: function(){
+            return $.ajax({
+                url: this.props.remove.replace("ID", $('body').data('id')),
+                method: "DELETE",
+                success: function() {
+                    window.location.href = "/";
+                }
+            });
+        },
+
         componentDidMount: function() {
             this.fetch().success(function(result) {
                 this.currentName = result.name;
@@ -114,21 +124,36 @@
             var helpCN = "help-block " + ((!!this.state.name && !isCurrent) ? "" : "hide");
             var btnDisabled = (!!this.state.title && !!this.state.name && !this.state.saving) ? "" : "disabled";
             var form =
-                <form role="form">
-                    <div className="form-group">
-                        <label className="text-muted">Title</label>
-                        <input ref="theTitle" type="text" className="form-control" value={this.state.title} onChange={this.titleChange}/>
-                        <p className={helpCN}>This project will be saved as <b className="text-info">{this.state.name}</b></p>
+                <div>
+                    <form role="form">
+                        <div className="form-group">
+                            <label className="text-muted">Title</label>
+                            <input ref="theTitle" type="text" className="form-control" value={this.state.title} onChange={this.titleChange}/>
+                            <p className={helpCN}>This project will be saved as <b className="text-info">{this.state.name}</b></p>
+                        </div>
+                        <div className="form-group">
+                            <label className="text-muted">Description (optional)</label>
+                            <input type="text" className="form-control" value={this.state.description} onChange={this.descChange}/>
+                        </div>
+                        <div className="form-group clearfix">
+                            <div className="pull-right">
+                                <a href="/" className="btn btn-default">Cancel</a>&nbsp;
+                                <button className="btn btn-info" disabled={btnDisabled} onClick={this.saveProject}>Save project</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr/>
+                    <div className="clearfix">
+                        <h4>Delete this project</h4>
+                        <p className="help-block">
+                            Once you delete a project, there is no going back. Please be certain
+                        </p>
+                        <button className="btn btn-danger pull-right" onClick={this.deleteProject}>
+                            Delete project
+                        </button>
                     </div>
-                    <div className="form-group">
-                        <label className="text-muted">Description (optional)</label>
-                        <input type="text" className="form-control" value={this.state.description} onChange={this.descChange}/>
-                    </div>
-                    <div className="form-group pull-right clearfix">
-                        <a href="/" className="btn btn-default">Cancel</a>&nbsp;
-                        <button className="btn btn-info" disabled={btnDisabled} onClick={this.saveProject}>Save project</button>
-                    </div>
-                </form>
+                </div>
+
 
             return (<div>{form}</div>);
         }
@@ -136,7 +161,7 @@
 
     // Load project settings
     React.render(
-        <ProjectSettings source="/projects/ID" put="/projects/ID" check="/projects_check"/>,
+        <ProjectSettings source="/projects/ID" put="/projects/ID" check="/projects_check" remove="/projects/ID"/>,
         document.getElementById('settings')
     );
 })(this);
