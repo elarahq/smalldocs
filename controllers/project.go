@@ -31,7 +31,7 @@ func ProjectById(context *ctx.Context, id string) (*models.Project, error) {
 
 	var project = new(models.Project)
 	collection := session.DB(db).C("projects")
-	if err := collection.FindId(id).One(project); err != nil {
+	if err := collection.FindId(bson.ObjectIdHex(id)).One(project); err != nil {
 		return nil, err
 	}
 	return project, nil
@@ -110,7 +110,6 @@ func GetAllProjects(context *ctx.Context, w http.ResponseWriter, r *http.Request
 //
 func GetProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
-
 	project, err := ProjectById(context, params["pid"])
 	if err != nil {
 		return 404, err
@@ -161,8 +160,8 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
-	project, err := ProjectByName(context, params["pname"])
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
+	project, err := ProjectById(context, params["pid"])
 	if err != nil {
 		return 404, err
 	}
@@ -201,8 +200,8 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 // Delete project by id
 //
 func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/?$`))
-	project, err := ProjectByName(context, params["pname"])
+	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
+	project, err := ProjectById(context, params["pid"])
 	if err != nil {
 		return 404, err
 	}

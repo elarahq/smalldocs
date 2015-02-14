@@ -94,8 +94,8 @@ func main() {
 	mux.Get("/projects/"+slug+"/settings/?$", AppHandlerFunc(controllers.ProjectSetting))
 	mux.Post("/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
 	mux.Post("/projects/?$", AppHandlerFunc(controllers.PostProject))
-	mux.Put("/projects/"+slug+"/?$", AppHandlerFunc(controllers.SaveProject))
-	mux.Delete("/projects/"+slug+"/?$", AppHandlerFunc(controllers.DeleteProject))
+	mux.Put("/projects/"+id+"/?$", AppHandlerFunc(controllers.SaveProject))
+	mux.Delete("/projects/"+id+"/?$", AppHandlerFunc(controllers.DeleteProject))
 
 	// docs routes
 	mux.Get("/docs/"+slug+"/?$", AppHandlerFunc(controllers.DocumentIndex))

@@ -68,7 +68,7 @@
                 dataType: "json",
                 data: JSON.stringify({
                     title: this.state.title,
-                    description: this.state.description,
+                    description: this.state.description.trim(),
                     name: this.state.name,
                 }),
                 success: function(result){
@@ -125,7 +125,7 @@
 
         descChange: function(e){
             this.setState({
-                description: (e.target.value || "").trim()
+                description: e.target.value || ""
             });
         },
 

@@ -60,13 +60,13 @@
 
             this.setState({saving: true});
             this.saveProject.xhr = $.ajax({
-                url: this.props.post,
-                method: "POST",
+                url: this.props.put.replace("ID", $('body').data('id')),
+                method: "PUT",
                 contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify({
                     title: this.state.title,
-                    description: this.state.description,
+                    description: this.state.description.trim(),
                     name: this.state.name,
                 }),
                 success: function(result){
@@ -74,9 +74,6 @@
                     this.state.projects.unshift(result);
                     this.setState({
                         saving: false,
-                        name: "",
-                        description: "",
-                        title: ""
                     });
                 }.bind(this),
                 error: function() {
@@ -106,7 +103,7 @@
 
         descChange: function(e){
             this.setState({
-                description: (e.target.value || "").trim()
+                description: (e.target.value || "")
             });
         },
 
@@ -118,7 +115,7 @@
                     <div className="form-group">
                         <label className="text-muted">Title</label>
                         <input ref="theTitle" type="text" className="form-control" value={this.state.title} onChange={this.titleChange}/>
-                        <p className={helpCN}>This project will be created as <b className="text-info">{this.state.name}</b></p>
+                        <p className={helpCN}>This project will be saved as <b className="text-info">{this.state.name}</b></p>
                     </div>
                     <div className="form-group">
                         <label className="text-muted">Description (optional)</label>
