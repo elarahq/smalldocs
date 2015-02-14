@@ -71,11 +71,9 @@
                     name: this.state.name,
                 }),
                 success: function(result){
-                    this.state.projects = this.state.projects || [];
-                    this.state.projects.unshift(result);
-                    this.setState({
-                        saving: false,
-                    });
+                    this.currentName = result.name;
+                    result.saving = false;
+                    this.setState(result);
                 }.bind(this),
                 error: function() {
                     this.setState({
@@ -120,6 +118,7 @@
         },
 
         render: function() {
+            var cancelURL =  "/docs/" + this.currentName;
             var isCurrent = (this.currentName && (this.currentName == this.state.name));
             var helpCN = "help-block " + ((!!this.state.name && !isCurrent) ? "" : "hide");
             var btnDisabled = (!!this.state.title && !!this.state.name && !this.state.saving) ? "" : "disabled";
@@ -137,7 +136,7 @@
                         </div>
                         <div className="form-group clearfix">
                             <div className="pull-right">
-                                <a href="/" className="btn btn-default">Cancel</a>&nbsp;
+                                <a href={cancelURL} className="btn btn-default">Cancel</a>&nbsp;
                                 <button className="btn btn-info" disabled={btnDisabled} onClick={this.saveProject}>Save project</button>
                             </div>
                         </div>

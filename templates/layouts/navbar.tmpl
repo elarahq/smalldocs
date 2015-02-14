@@ -13,7 +13,15 @@
     <nav class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
         <li>
+            <a href="/">Home</a>
         </li>
+      </ul>
+      <ul class="nav navbar-nav pull-right">
+        {{if .project}}
+        <li>
+            <a href="/projects/{{.project.Name}}/settings">Settings</a>
+        </li>
+        {{end}}
       </ul>
     </nav>
   </div>

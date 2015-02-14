@@ -85,17 +85,18 @@ func main() {
 	mux := new(router.Router)
 	mux.NotFound(AppHandlerFunc(controllers.NotFound))
 
-	mux.Get("/$", AppHandlerFunc(controllers.Index))
+	// root
+	mux.Get("^/?$", AppHandlerFunc(controllers.Index))
 
 	// projects routes
-	mux.Get("/projects/?$", AppHandlerFunc(controllers.ProjectIndex))
-	mux.Get("/projects/all/?$", AppHandlerFunc(controllers.GetAllProjects))
-	mux.Get("/projects/"+id+"/?$", AppHandlerFunc(controllers.GetProject))
-	mux.Get("/projects/"+slug+"/settings/?$", AppHandlerFunc(controllers.ProjectSetting))
-	mux.Post("/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
-	mux.Post("/projects/?$", AppHandlerFunc(controllers.PostProject))
-	mux.Put("/projects/"+id+"/?$", AppHandlerFunc(controllers.SaveProject))
-	mux.Delete("/projects/"+id+"/?$", AppHandlerFunc(controllers.DeleteProject))
+	mux.Get("^/projects/?$", AppHandlerFunc(controllers.ProjectIndex))
+	mux.Get("^/projects/all/?$", AppHandlerFunc(controllers.GetAllProjects))
+	mux.Get("^/projects/"+id+"/?$", AppHandlerFunc(controllers.GetProject))
+	mux.Get("^/projects/"+slug+"/settings/?$", AppHandlerFunc(controllers.ProjectSetting))
+	mux.Post("^/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
+	mux.Post("^/projects/?$", AppHandlerFunc(controllers.PostProject))
+	mux.Put("^/projects/"+id+"/?$", AppHandlerFunc(controllers.SaveProject))
+	mux.Delete("^/projects/"+id+"/?$", AppHandlerFunc(controllers.DeleteProject))
 
 	// docs routes
 	mux.Get("/docs/"+slug+"/?$", AppHandlerFunc(controllers.DocumentIndex))

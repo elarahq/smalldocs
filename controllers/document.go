@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"regexp"
 
@@ -17,6 +16,11 @@ import (
 //
 func DocumentIndex(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/docs/(?P<pname>`+SLUG+`)/?$`))
-	fmt.Fprint(w, params["pname"])
-	return 200, nil
+	project, err := ProjectByName(context, params["pname"])
+	if err != nil {
+		return 404, err
+	}
+	return 200, context.RenderTemplate(w, "docs", map[string]interface{}{
+		"project": project,
+	})
 }

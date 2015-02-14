@@ -15,7 +15,12 @@ h4, h5, h6 {
 .navbar {
     margin-bottom: 10px;
     border-radius: 0;
-    box-shadow: 0 1px 1px rgba(0,0,0,.15);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    border: 0px;
+}
+
+.navbar a {
+    color: #333;
 }
 
 pre.prettyprint {
@@ -28,6 +33,10 @@ pre.prettyprint > code {
     background: none;
 }
 
+.padding-top-10 {
+    padding-top: 10px;
+}
+
 .padding-bottom-10 {
     padding-bottom: 10px;
 }
@@ -37,6 +46,12 @@ pre.prettyprint > code {
     font-size: 18px;
     color: #CCC;
 }
+
+.list-group,
+.btn {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.075);
+}
+
 
 /* new/edit label */
 .new-add a,
