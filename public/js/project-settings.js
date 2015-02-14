@@ -39,7 +39,8 @@
                     contentType: "application/json",
                     dataType: "json",
                     data: JSON.stringify({
-                        title: this.state.title
+                        title: this.state.title,
+                        id: this.state.id
                     }),
                     success: function(result){
                         this.setState(result);
@@ -86,6 +87,7 @@
 
         componentDidMount: function() {
             this.fetch().success(function(result) {
+                this.currentName = result.name;
                 if (this.isMounted()) {
                     this.setState(result);
                 }
@@ -108,7 +110,8 @@
         },
 
         render: function() {
-            var helpCN = "help-block " + (!!this.state.name ? "" : "hide");
+            var isCurrent = (this.currentName && (this.currentName == this.state.name));
+            var helpCN = "help-block " + ((!!this.state.name && !isCurrent) ? "" : "hide");
             var btnDisabled = (!!this.state.title && !!this.state.name && !this.state.saving) ? "" : "disabled";
             var form =
                 <form role="form">

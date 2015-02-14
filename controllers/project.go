@@ -65,6 +65,7 @@ func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) 
 
 	var data = make(map[string]string)
 	context.ReadJson(r, &data)
+	id, _ := data["id"]
 	title, ok := data["title"]
 	if !ok {
 		return 412, fmt.Errorf("Title is required")
@@ -72,9 +73,12 @@ func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) 
 
 	name := utils.Slug(title)
 	collection := session.DB(db).C("projects")
-	count, err := collection.Find(bson.M{"name": name}).Count()
-	if err != nil || count > 0 || name == "" {
-		return 403, nil
+
+	var project *models.Project = new(models.Project)
+	if err := collection.Find(bson.M{"name": name}).One(project); err == nil {
+		if project.ID.Hex() != id {
+			return 403, nil
+		}
 	}
 
 	// send name
