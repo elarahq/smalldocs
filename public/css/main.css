@@ -89,10 +89,21 @@ pre.prettyprint > code {
     background-color: #FAFAFA;
 }
 
-.page.active .page-text {
-    border-right: 5px solid #337ab7;
-    background-color: #337ab7;
-    color: #FFF;
+.page-text {
+    padding: 0px;
+}
+
+.page.active .page-text,
+.page-text:hover {
+    border-right: 2px solid #337ab7;
+}
+
+.page-text a {
+    padding: 10px;
+    display: inline-block;
+    text-decoration: none;
+    color: #333;
+    width: 100%;
 }
 
 /* Breadcrumb */

@@ -20,7 +20,11 @@
         render: function() {
             var page = this.state.page;
             return <div className="page" data-page={page.id} data-name={page.name}>
-                    <div className="page-text" data-page={page.id} data-name={page.name}>{page.title}</div>
+                    <div className="page-text" data-page={page.id} data-name={page.name}>
+                        <a href={this.props.source}>
+                            {page.title}
+                        </a>
+                    </div>
                 </div>
         }
     });
