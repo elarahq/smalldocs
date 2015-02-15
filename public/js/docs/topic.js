@@ -8,7 +8,7 @@
 
         getInitialState: function() {
             return {
-                collapsed: this.props.collapsed
+                collapsed: true
             };
         },
 
@@ -16,6 +16,21 @@
             this.setState({
                 collapsed: !this.state.collapsed
             });
+        },
+
+        componentWillMount: function(){
+            this.dispatchToken = app.dispatcher.register(function(payload){
+                switch(payload.actionType) {
+                    case "change:url":
+                        this.state.collapsed = payload.currentTopic != this.props.topic.name;
+                        this.setState(payload);
+                        break;
+                }
+            }.bind(this));
+        },
+
+        componentWillUnmount: function(){
+            app.dispatcher.unregister(this.dispatchToken);
         },
 
         render: function() {
@@ -27,6 +42,7 @@
                 var source = ["/docs", projectName, topic.name, page.name].join("/");
                 return <Page key={key} projectName={projectName} source={source} topic={topic} page={page}/>
             });
+
             var cn = ["topic", this.state.collapsed ? "collapsed" : ""].join(' ');
             return <div className={cn} data-topic={topic.id} data-name={topic.name}>
                     <div className="topic-text" data-topic={topic.id} data-name={topic.name}

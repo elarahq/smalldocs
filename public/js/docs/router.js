@@ -5,10 +5,10 @@
     // dispatch route
     var dispatchURL = function(projectName, topicName, pageName) {
         app.dispatcher.dispatch({
-            actionType: "changeURL",
-            projectName: projectName,
-            topicName: topicName,
-            pageName: pageName
+            actionType: "change:url",
+            currentProject: projectName,
+            currentTopic: topicName,
+            currentPage: pageName
         });
     }
 

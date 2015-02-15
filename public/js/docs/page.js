@@ -8,23 +8,31 @@
 
         getInitialState: function() {
             return {
-                currentPage: null,
-
-                page: this.props.page,
-                source: this.props.source,
-                topic: this.props.topic,
+                active: false
             };
         },
 
         componentWillMount: function(){
+            this.dispatchToken = app.dispatcher.register(function(payload){
+                switch(payload.actionType) {
+                    case "change:url":
+                        this.state.active = payload.currentPage == this.props.page.name;
+                        this.setState(payload);
+                        break;
+                }
+            }.bind(this));
+        },
+
+        componentWillUnmount: function(){
+            app.dispatcher.unregister(this.dispatchToken);
         },
 
         render: function() {
-            var page = this.state.page;
-            var source = this.state.source;
-            var active = page.name != this.state.currentPage;
+            var page = this.props.page;
+            var source = this.props.source;
 
-            return <div className="page" data-page={page.id} data-name={page.name}>
+            var cn = ["page", this.state.active ? "active" : ""].join(' ');
+            return <div className={cn} data-page={page.id} data-name={page.name}>
                     <div className="page-text" data-page={page.id} data-name={page.name}>
                         <a href={source} data-noreload="true">
                             {page.title}
