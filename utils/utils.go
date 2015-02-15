@@ -26,13 +26,3 @@ func Title(str string) string {
 	str = TITLE.ReplaceAllString(str, "")
 	return strings.Trim(str, " ")
 }
-
-// Get matched parameters
-func GetMatchedParams(str string, re *regexp.Regexp) map[string]string {
-	match := re.FindStringSubmatch(str)
-	result := make(map[string]string)
-	for i, name := range re.SubexpNames() {
-		result[name] = match[i]
-	}
-	return result
-}

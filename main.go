@@ -9,25 +9,25 @@ import (
 	"strings"
 	"time"
 
-	cfg "github.com/jdkanani/smalldocs/config"
-	ctx "github.com/jdkanani/smalldocs/context"
+	"github.com/jdkanani/smalldocs/config"
+	"github.com/jdkanani/smalldocs/context"
 
 	"github.com/jdkanani/smalldocs/controllers"
-	"github.com/jdkanani/smalldocs/handlers"
 	"github.com/jdkanani/smalldocs/models"
-	"github.com/jdkanani/smalldocs/router"
 	"github.com/jdkanani/smalldocs/utils"
+
+	"github.com/jdkanani/goa"
 
 	"labix.org/v2/mgo"
 )
 
-func DBInit(config *cfg.Config) *mgo.Session {
+func DBInit() *mgo.Session {
 	// Mongodb connection
 	// We need this object to establish a session to our MongoDB.
 	mongoDBDialInfo := &mgo.DialInfo{
-		Addrs:    strings.Split(config.Get("db.hosts"), ","),
+		Addrs:    strings.Split(context.Config.Get("db.hosts"), ","),
 		Timeout:  60 * time.Second,
-		Database: config.Get("db.database"),
+		Database: context.Config.Get("db.database"),
 		// Username: Config.Get("db.username"),
 		// Password: Config.Get("db.password"),
 	}
@@ -41,7 +41,7 @@ func DBInit(config *cfg.Config) *mgo.Session {
 	mongoSession.SetMode(mgo.Monotonic, true)
 
 	// Project init
-	models.ProjectInit(mongoSession, config)
+	models.ProjectInit(mongoSession)
 
 	return mongoSession
 }
@@ -52,61 +52,50 @@ func main() {
 	utils.Check(err)
 
 	// load configuration
-	config := new(cfg.Config)
-	err = config.Load(filepath.Join(root, "config.ini"))
+	cfg := new(config.Config)
+	context.Config = cfg
+	err = context.Config.Load(filepath.Join(root, "config.ini"))
 	utils.Check(err)
 
 	// add root directory to config
-	config.Set("app.root", root)
-	config.Set("app.templates", filepath.Join(root, config.Get("app.templates")))
-	config.Set("app.static", filepath.Join(root, config.Get("app.static")))
+	cfg.Set("app.root", root)
+	cfg.Set("app.templates", filepath.Join(root, cfg.Get("app.templates")))
+	cfg.Set("app.static", filepath.Join(root, cfg.Get("app.static")))
 
-	// context
-	context := &ctx.Context{
-		Config:    config,
-		DBSession: DBInit(config),
-	}
-
-	var AppHandlerFunc = func(fn handlers.HandleFunc) http.Handler {
-		return &handlers.ErrorHandler{
-			Context: context,
-			Handler: fn,
-		}
-	}
+	context.DBSession = DBInit()
 
 	// static content handler
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
 
-	// slug regexp
-	slug := controllers.SLUG
-	id := controllers.ID
-
 	// router
-	mux := new(router.Router)
-	mux.NotFound(AppHandlerFunc(controllers.NotFound))
+	mux := new(goa.Router)
+	mux.SetRenderer(&goa.Renderer{
+		TemplateDir: context.Config.Get("app.templates"),
+		LayoutDir:   context.Config.Get("app.layouts"),
+	})
+	mux.NotFound(controllers.NotFound)
 
-	// root
-	mux.Get("^/?$", AppHandlerFunc(controllers.Index))
+	mux.Get("/", controllers.Index)
 
 	// projects routes
-	mux.Get("^/projects/?$", AppHandlerFunc(controllers.ProjectIndex))
-	mux.Get("^/projects/all/?$", AppHandlerFunc(controllers.GetAllProjects))
-	mux.Get("^/projects/"+id+"/?$", AppHandlerFunc(controllers.GetProject))
-	mux.Get("^/projects/"+slug+"/settings/?$", AppHandlerFunc(controllers.ProjectSetting))
-	mux.Post("^/projects_check/?$", AppHandlerFunc(controllers.CheckProject))
-	mux.Post("^/projects/?$", AppHandlerFunc(controllers.PostProject))
-	mux.Put("^/projects/"+id+"/?$", AppHandlerFunc(controllers.SaveProject))
-	mux.Delete("^/projects/"+id+"/?$", AppHandlerFunc(controllers.DeleteProject))
+	mux.Get("/projects/?$", controllers.ProjectIndex)
+	mux.Get("/projects/all/?$", controllers.GetAllProjects)
+	mux.Get("/projects/:pid/?$", controllers.GetProject)
+	mux.Get("/projects/:pname/settings/?$", controllers.ProjectSetting)
+	mux.Post("/projects_check/?$", controllers.CheckProject)
+	mux.Post("/projects/?$", controllers.PostProject)
+	mux.Put("/projects/:pid/?$", controllers.SaveProject)
+	mux.Delete("/projects/:pid/?$", controllers.DeleteProject)
 
 	// docs routes
-	mux.Get("/docs/"+slug+"/?$", AppHandlerFunc(controllers.DocumentIndex))
-	mux.Get("/docs/"+slug+"/"+slug+"/"+slug+"/?$", AppHandlerFunc(controllers.PageIndex))
+	mux.Get("/docs/:pname/?$", controllers.DocumentIndex)
+	mux.Get("/docs/:pname/:dname/:pagename/?$", controllers.PageIndex)
 
 	// add router to http handle
 	http.Handle("/", mux)
 
 	// Start server
-	serverURL := config.Get("server.host") + config.Get("server.port")
+	serverURL := cfg.Get("server.host") + cfg.Get("server.port")
 	fmt.Printf("Listening on %s ...", serverURL)
 	log.Fatal(http.ListenAndServe(serverURL, nil))
 }

@@ -3,26 +3,19 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"regexp"
 	"time"
 
-	ctx "github.com/jdkanani/smalldocs/context"
+	"github.com/jdkanani/goa"
+
+	"github.com/jdkanani/smalldocs/context"
 	"github.com/jdkanani/smalldocs/models"
 	"github.com/jdkanani/smalldocs/utils"
 
 	"labix.org/v2/mgo/bson"
 )
 
-//
-// Project page
-//
-func ProjectIndex(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	http.Redirect(w, r, "/", http.StatusMovedPermanently)
-	return 301, nil
-}
-
 // get Project by id
-func ProjectById(context *ctx.Context, id string) (*models.Project, error) {
+func ProjectById(id string) (*models.Project, error) {
 	var db = context.Config.Get("db.database")
 
 	// get mongodb session
@@ -38,7 +31,7 @@ func ProjectById(context *ctx.Context, id string) (*models.Project, error) {
 }
 
 // get Project by name
-func ProjectByName(context *ctx.Context, name string) (*models.Project, error) {
+func ProjectByName(name string) (*models.Project, error) {
 	var db = context.Config.Get("db.database")
 
 	// get mongodb session
@@ -54,9 +47,17 @@ func ProjectByName(context *ctx.Context, name string) (*models.Project, error) {
 }
 
 //
+// Project page
+//
+func ProjectIndex(context *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+	return 301, nil
+}
+
+//
 // Project name check
 //
-func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+func CheckProject(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	var db = context.Config.Get("db.database")
 
 	// get mongodb session
@@ -64,7 +65,7 @@ func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) 
 	defer session.Close()
 
 	var data = make(map[string]string)
-	context.ReadJson(r, &data)
+	ctx.ReadJson(&data)
 	id, _ := data["id"]
 	title, ok := data["title"]
 	if !ok {
@@ -82,7 +83,7 @@ func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) 
 	}
 
 	// send name
-	context.JSON(w, &map[string]string{
+	ctx.JSON(&map[string]string{
 		"title": title,
 		"name":  name,
 	})
@@ -92,8 +93,8 @@ func CheckProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) 
 //
 // Get all projects
 //
-func GetAllProjects(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	var db = context.Config.Get("db.database")
+func GetAllProjects(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	db := context.Config.Get("db.database")
 
 	// get mongodb session
 	session := context.DBSession.Copy()
@@ -106,26 +107,25 @@ func GetAllProjects(context *ctx.Context, w http.ResponseWriter, r *http.Request
 		return 500, err
 	}
 
-	return 200, context.JSON(w, &projects)
+	return 200, ctx.JSON(&projects)
 }
 
 //
 // Get project by Id
 //
-func GetProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
-	project, err := ProjectById(context, params["pid"])
+func GetProject(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	project, err := ProjectById(ctx.Params["pid"])
 	if err != nil {
 		return 404, err
 	}
 
-	return 200, context.JSON(w, project)
+	return 200, ctx.JSON(project)
 }
 
 //
 // Create new project
 //
-func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+func PostProject(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	var db = context.Config.Get("db.database")
 
 	// get mongodb session
@@ -135,7 +135,7 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 	collection := session.DB(db).C("projects")
 
 	var project = new(models.Project)
-	if err := context.ReadJson(r, project); err != nil {
+	if err := ctx.ReadJson(project); err != nil {
 		return 500, err
 	}
 
@@ -152,20 +152,19 @@ func PostProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
-	return 200, context.JSON(w, project)
+	return 200, ctx.JSON(project)
 }
 
 //
 // Save project id
 //
-func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+func SaveProject(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	userProject := new(models.Project)
-	if err := context.ReadJson(r, userProject); err != nil {
+	if err := ctx.ReadJson(userProject); err != nil {
 		return 500, err
 	}
 
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
-	project, err := ProjectById(context, params["pid"])
+	project, err := ProjectById(ctx.Params["pid"])
 	if err != nil {
 		return 404, err
 	}
@@ -197,15 +196,14 @@ func SaveProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (
 		return 500, err
 	}
 
-	return 200, context.JSON(w, project)
+	return 200, ctx.JSON(project)
 }
 
 //
 // Delete project by id
 //
-func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pid>`+ID+`)/?$`))
-	project, err := ProjectById(context, params["pid"])
+func DeleteProject(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	project, err := ProjectById(ctx.Params["pid"])
 	if err != nil {
 		return 404, err
 	}
@@ -222,19 +220,17 @@ func DeleteProject(context *ctx.Context, w http.ResponseWriter, r *http.Request)
 		return 500, err
 	}
 
-	return 200, context.JSON(w, project)
+	return 200, ctx.JSON(project)
 }
 
 //
 // Project settings
 //
-func ProjectSetting(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/projects/(?P<pname>`+SLUG+`)/settings/?$`))
-
-	project, err := ProjectByName(context, params["pname"])
+func ProjectSetting(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	project, err := ProjectByName(ctx.Params["pname"])
 	if err != nil {
 		return 404, err
 	}
 
-	return 200, context.RenderTemplate(w, "projectSettings", &project)
+	return 200, ctx.Render("projectSettings", &project)
 }

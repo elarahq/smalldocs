@@ -4,7 +4,7 @@ import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 
-	cfg "github.com/jdkanani/smalldocs/config"
+	"github.com/jdkanani/smalldocs/context"
 )
 
 //
@@ -18,12 +18,12 @@ type Project struct {
 	Timestamp   int64         `json:"timestamp" bson:"timestamp"`
 }
 
-func ProjectInit(dbSession *mgo.Session, config *cfg.Config) error {
+func ProjectInit(dbSession *mgo.Session) error {
 	// get a connection
 	conn := dbSession.Copy()
 	defer conn.Close()
 
-	collection := conn.DB(config.Get("db.database")).C("projects")
+	collection := conn.DB(context.Config.Get("db.database")).C("projects")
 
 	// Unique key index
 	index := mgo.Index{

@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	ctx "github.com/jdkanani/smalldocs/context"
+	"github.com/jdkanani/goa"
 )
 
 // Slug regxp string
@@ -11,11 +11,11 @@ const SLUG = `[a-zA-Z0-9\.-]+`
 const ID = `[a-fA-F\d]{24}`
 
 // Index handler
-func Index(context *ctx.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
-	return 200, context.RenderTemplate(w, "index", "")
+func Index(context *goa.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
+	return 200, context.Render("index", "")
 }
 
 // Not found handler
-func NotFound(context *ctx.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
+func NotFound(context *goa.Context, w http.ResponseWriter, r *http.Request) (code int, err error) {
 	return 404, nil
 }
