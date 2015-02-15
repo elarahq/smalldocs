@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"regexp"
 
@@ -12,7 +13,7 @@ import (
 )
 
 //
-// Document page
+// Document index
 //
 func DocumentIndex(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
 	params := utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(`/docs/(?P<pname>`+SLUG+`)/?$`))
@@ -23,4 +24,13 @@ func DocumentIndex(context *ctx.Context, w http.ResponseWriter, r *http.Request)
 	return 200, context.RenderTemplate(w, "docs", map[string]interface{}{
 		"project": project,
 	})
+}
+
+//
+//  Page index
+//
+func PageIndex(context *ctx.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	urlRegexp := fmt.Sprintf(`/docs/(?P<projectName>%s)/(?P<docName>%s)/(?P<pageName>%s)`, SLUG, SLUG, SLUG)
+	_ = utils.GetMatchedParams(r.URL.Path, regexp.MustCompile(urlRegexp))
+	return 200, nil
 }

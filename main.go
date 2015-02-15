@@ -100,6 +100,7 @@ func main() {
 
 	// docs routes
 	mux.Get("/docs/"+slug+"/?$", AppHandlerFunc(controllers.DocumentIndex))
+	mux.Get("/docs/"+slug+"/"+slug+"/"+slug+"/?$", AppHandlerFunc(controllers.PageIndex))
 
 	// add router to http handle
 	http.Handle("/", mux)

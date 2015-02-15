@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/static/css/main.css" type="text/css" media="screen" charset="utf-8">
   </head>
 
-  <body data-id="{{.project.ID.Hex}}">
+  <body data-id="{{.project.ID.Hex}}" data-name="{{.project.Name}}">
     {{template "navbar" .}}
     <div class="container">
       <div class="row" id="docs">
@@ -27,6 +27,7 @@
     <!-- Libs -->
     <script src="/static/bower_components/jquery/dist/jquery.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/bower_components/react/react.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/bower_components/flux/dist/Flux.js" type="text/javascript" charset="utf-8"></script>
 
     <!-- app -->
     <script src="/static/build/app.js" type="text/javascript" charset="utf-8"></script>

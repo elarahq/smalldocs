@@ -6,22 +6,15 @@
     var Docs = app.Docs = React.createClass({
         displayName: "Docs",
 
-        getInitialState: function(){
-            return {
-            };
-        },
-
-        componentDidMount: function() {
-        },
-
         render: function() {
             var topicUrl = this.props.source.replace("ID", $("body").data("id"));
+            var projectName = $("body").data("name")
             // Get TopicList component
             var TopicList = app.TopicList;
 
             return <div>
                     <div className="col-sm-4 col-md-3">
-                        <TopicList source={topicUrl}/>
+                        <TopicList source={topicUrl} projectName={projectName}/>
                     </div>
                     <div className="col-sm-8 col-md-9">
                     </div>

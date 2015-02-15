@@ -22,9 +22,10 @@
             // Get Page component
             var Page = app.Page;
             var topic = this.props.topic;
+            var projectName = this.props.projectName;
             var cViews = (topic.children || []).map(function(page, key){
-                var source = ["/docs", topic.name, page.name].join("/");
-                return <Page key={key} source={source} topic={topic} page={page}/>
+                var source = ["/docs", projectName, topic.name, page.name].join("/");
+                return <Page key={key} projectName={projectName} source={source} topic={topic} page={page}/>
             });
             var cn = ["topic", this.state.collapsed ? "collapsed" : ""].join(' ');
             return <div className={cn} data-topic={topic.id} data-name={topic.name}>
