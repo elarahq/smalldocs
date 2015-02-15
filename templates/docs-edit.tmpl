@@ -1,4 +1,4 @@
-{{define "docs"}}
+{{define "docs-edit"}}
 <!DOCTYPE HTML>
 <html>
   <head>
@@ -16,11 +16,7 @@
   <body data-id="{{.project.ID.Hex}}" data-name="{{.project.Name}}">
     {{template "navbar" .}}
     <div class="container">
-      <div class="row" id="docs">
-        <div class="col-sm-3 col-md-2">
-        </div>
-        <div class="col-sm-9 col-md-10">
-        </div>
+      <div class="row" id="docs-edit">
       </div>
     </div>
 
@@ -32,7 +28,10 @@
 
     <!-- app -->
     <script src="/static/build/app.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/build/docs/edit.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/edit/page.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/edit/topic.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/edit/topic-list.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/build/docs/edit/docs-edit.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/build/docs/router.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>

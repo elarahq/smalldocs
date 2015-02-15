@@ -82,22 +82,26 @@ func main() {
 	mux.Get("/projects/?$", controllers.ProjectIndex)
 	mux.Get("/projects/all/?$", controllers.GetAllProjects)
 	mux.Get("/projects/:pid/?$", controllers.GetProject)
-	mux.Get("/projects/:pid/topics?$", controllers.GetTopics)
 	mux.Get("/projects/:pname/settings/?$", controllers.ProjectSetting)
 	mux.Post("/projects_check/?$", controllers.CheckProject)
 	mux.Post("/projects/?$", controllers.PostProject)
 	mux.Put("/projects/:pid/?$", controllers.SaveProject)
 	mux.Delete("/projects/:pid/?$", controllers.DeleteProject)
 
+	// project topics
+	mux.Get("/projects/:pid/topics/?$", controllers.GetTopics)
+	mux.Post("/projects/:pid/topics_check/?$", controllers.CheckTopic)
+	mux.Post("/projects/:pid/topics/?$", controllers.PostTopic)
+
 	// docs routes
 	mux.Get("/docs/:pname/?$", controllers.DocumentIndex)
-	mux.Get("/docs/:pname/:topicName/?$", controllers.PageIndex)
-	mux.Get("/docs/:pname/:topicName/:pageName/?$", controllers.PageIndex)
+	mux.Get("/docs/:pname/:topicName/?$", controllers.DocumentIndex)
+	mux.Get("/docs/:pname/:topicName/:pageName/?$", controllers.DocumentIndex)
 
 	// edit routes
-	mux.Get("/edit/:pname/?$", controllers.DocumentIndex)
-	mux.Get("/edit/:pname/:topicName/?$", controllers.PageIndex)
-	mux.Get("/edit/:pname/:topicName/:pageName/?$", controllers.PageIndex)
+	mux.Get("/edit/:pname/?$", controllers.EditIndex)
+	mux.Get("/edit/:pname/:topicName/?$", controllers.EditIndex)
+	mux.Get("/edit/:pname/:topicName/:pageName/?$", controllers.EditIndex)
 
 	// add router to http handle
 	http.Handle("/", mux)

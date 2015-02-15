@@ -19,6 +19,9 @@
       <ul class="nav navbar-nav pull-right">
         {{if .project}}
         <li>
+            <a href="/edit/{{.project.Name}}">Edit Project</a>
+        </li>
+        <li>
             <a href="/projects/{{.project.Name}}/settings">Settings</a>
         </li>
         {{end}}
