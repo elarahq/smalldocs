@@ -24,7 +24,7 @@
 
     // Load docs
     React.render(
-        <Docs source="/docs/ID"/>,
+        <Docs source="/projects/ID/topics"/>,
         document.getElementById('docs')
     );
 })(this);

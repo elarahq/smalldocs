@@ -40,9 +40,6 @@ func DBInit() *mgo.Session {
 	}
 	mongoSession.SetMode(mgo.Monotonic, true)
 
-	// Project init
-	models.ProjectInit(mongoSession)
-
 	return mongoSession
 }
 
@@ -62,7 +59,11 @@ func main() {
 	cfg.Set("app.templates", filepath.Join(root, cfg.Get("app.templates")))
 	cfg.Set("app.static", filepath.Join(root, cfg.Get("app.static")))
 
+	// Database initiate
 	context.DBSession = DBInit()
+	models.ProjectInit()
+	models.TopicInit()
+	models.PageInit()
 
 	// static content handler
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
@@ -81,6 +82,7 @@ func main() {
 	mux.Get("/projects/?$", controllers.ProjectIndex)
 	mux.Get("/projects/all/?$", controllers.GetAllProjects)
 	mux.Get("/projects/:pid/?$", controllers.GetProject)
+	mux.Get("/projects/:pid/topics?$", controllers.GetTopics)
 	mux.Get("/projects/:pname/settings/?$", controllers.ProjectSetting)
 	mux.Post("/projects_check/?$", controllers.CheckProject)
 	mux.Post("/projects/?$", controllers.PostProject)
@@ -89,7 +91,13 @@ func main() {
 
 	// docs routes
 	mux.Get("/docs/:pname/?$", controllers.DocumentIndex)
-	mux.Get("/docs/:pname/:dname/:pagename/?$", controllers.PageIndex)
+	mux.Get("/docs/:pname/:topicName/?$", controllers.PageIndex)
+	mux.Get("/docs/:pname/:topicName/:pageName/?$", controllers.PageIndex)
+
+	// edit routes
+	mux.Get("/edit/:pname/?$", controllers.DocumentIndex)
+	mux.Get("/edit/:pname/:topicName/?$", controllers.PageIndex)
+	mux.Get("/edit/:pname/:topicName/:pageName/?$", controllers.PageIndex)
 
 	// add router to http handle
 	http.Handle("/", mux)

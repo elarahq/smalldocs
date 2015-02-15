@@ -18,9 +18,9 @@ type Project struct {
 	Timestamp   int64         `json:"timestamp" bson:"timestamp"`
 }
 
-func ProjectInit(dbSession *mgo.Session) error {
+func ProjectInit() error {
 	// get a connection
-	conn := dbSession.Copy()
+	conn := context.DBSession.Copy()
 	defer conn.Close()
 
 	collection := conn.DB(context.Config.Get("db.database")).C("projects")

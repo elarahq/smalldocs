@@ -234,3 +234,24 @@ func ProjectSetting(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (i
 
 	return 200, ctx.Render("projectSettings", &project)
 }
+
+//
+// Get project topics
+//
+func GetTopics(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	projectId := ctx.Params["pid"]
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+
+	// remove project from collection
+	collection := session.DB(db).C("topics")
+
+	var topics = make([]models.Topic, 0)
+	if err := collection.Find(bson.M{"project": bson.ObjectIdHex(projectId)}).All(&topics); err != nil {
+		return 500, err
+	}
+	return 200, ctx.JSON(topics)
+}
