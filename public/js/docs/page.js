@@ -8,7 +8,7 @@
 
         getInitialState: function() {
             return {
-                active: false
+                active: this.props.active
             };
         },
 
@@ -16,7 +16,7 @@
             this.dispatchToken = app.dispatcher.register(function(payload){
                 switch(payload.actionType) {
                     case "change:url":
-                        this.state.active = payload.currentPage == this.props.page.name;
+                        this.state.active = payload.currentPage == this.props.page.name && payload.currentTopic == this.props.topic.name;
                         this.setState(payload);
                         break;
                 }

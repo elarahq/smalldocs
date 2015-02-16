@@ -15,6 +15,7 @@
     // routes
     var routes = {
         "/docs/:projectName": dispatchURL,
+        "/docs/:projectName/:topicName": dispatchURL,
         "/docs/:projectName/:topicName/:pageName": dispatchURL,
         "/edit/:projectName": dispatchURL,
         "/edit/:projectName/:topicName": dispatchURL,

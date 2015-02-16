@@ -28,7 +28,6 @@ func TopicInit() error {
 	// Unique key index
 	index := mgo.Index{
 		Key:        []string{"name"},
-		Unique:     true,
 		DropDups:   true,
 		Background: true,
 		Sparse:     true,

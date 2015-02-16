@@ -55,6 +55,7 @@
                     p = <app.Topic
                         source={source}
                         put={source}
+                        remove={source}
                         post={pages}
                         pages={pages}
                         projectName={projectName}

@@ -36,12 +36,21 @@
             var Topic = app.Topic;
 
             var projectName = this.props.projectName;
+            var projectId = this.props.projectId;
 
             var topics = this.state.topics || [];
             var views = topics.map(function(topic, key) {
-                var source = ["/docs", projectName, topic.name];
-                return <Topic key={key} projectName={projectName} topic={topic} source={source}/>
-            });
+                var source = ["/docs", projectName, topic.name].join("/");
+                var pages = ["/projects", projectId, "topics", topic.id, "pages"].join("/");
+                return <Topic key={key}
+                        projectName={this.props.projectName}
+                        topicName={this.props.topicName}
+                        pageName={this.props.pageName}
+                        pages={pages}
+                        topic={topic}
+                        collapsed={this.props.topicName != topic.name}
+                        source={source}/>
+            }.bind(this));
             return <div className="topic-list">{views}</div>
         }
     });

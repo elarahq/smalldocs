@@ -77,7 +77,8 @@
             });
         },
 
-        deleteTopic: function(){
+        deleteTopic: function(e){
+            e.preventDefault();
             return $.ajax({
                 url: this.props.remove,
                 method: "DELETE",
