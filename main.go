@@ -93,6 +93,7 @@ func main() {
 	mux.Post("/projects/:pid/topics_check/?$", controllers.CheckTopic)
 	mux.Post("/projects/:pid/topics/?$", controllers.PostTopic)
 	mux.Get("/projects/:pid/topics/:tid/?$", controllers.GetTopic)
+	mux.Get("/topics/:tid/?$", controllers.GetTopic)
 	mux.Put("/projects/:pid/topics/:tid/?$", controllers.SaveTopic)
 	mux.Delete("/projects/:pid/topics/:tid/?$", controllers.DeleteTopic)
 
@@ -101,6 +102,7 @@ func main() {
 	mux.Post("/projects/:pid/topics/:tid/pages_check/?$", controllers.CheckPage)
 	mux.Post("/projects/:pid/topics/:tid/pages/?$", controllers.PostPage)
 	mux.Get("/projects/:pid/topics/:tid/pages/:pageId/?$", controllers.GetPage)
+	mux.Get("/pages/:pageId/?$", controllers.GetPage)
 	mux.Put("/projects/:pid/topics/:tid/pages/:pageId/?$", controllers.SavePage)
 	mux.Delete("/projects/:pid/topics/:tid/pages/:pageId/?$", controllers.DeletePage)
 

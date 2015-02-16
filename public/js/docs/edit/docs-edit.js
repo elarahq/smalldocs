@@ -47,7 +47,19 @@
 
             if (this.state.currentTopic) {
                 if (this.state.currentPage) {
-                    p = <app.Page projectName={projectName} projectId={projectId}/>;
+                    var source = ["/projects", this.state.currentProject,
+                                "topics", this.state.currentTopic,
+                                "pages", this.state.currentPage].join("/"),
+
+                    p = <app.Page
+                        source={source}
+                        put={source}
+                        remove={source}
+                        projectName={projectName}
+                        projectId={projectId}
+                        topicId={this.state.currentTopic}
+                        pageId={this.state.currentPage}/>;
+
                 } else {
                     var source = [topics, this.state.currentTopic].join("/");
                     var pages = [topics, this.state.currentTopic, "pages"].join("/");

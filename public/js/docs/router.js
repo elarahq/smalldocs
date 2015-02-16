@@ -26,6 +26,7 @@
     app.router = Router(routes);
     app.router.configure({
         html5history: true,
+        strict: false,
     });
     app.router.init();
 

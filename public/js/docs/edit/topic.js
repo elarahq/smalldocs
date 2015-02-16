@@ -173,10 +173,11 @@
                 <div className="clearfix">
                     <form role="form" onSubmit={this.createPage}>
                         <div className="form-group">
+                            <label className="help-block">Add new page</label>
                             <input ref="theNewTitle"
                                 type="text"
                                 className="form-control"
-                                placeholder="Topic Title"/>
+                                placeholder="Page title"/>
                         </div>
                         <div className="form-group pull-right clearfix">
                             <button className="btn btn-info" onClick={this.createPage}>
@@ -187,6 +188,11 @@
                 </div>
 
             return <div>
+                    <div className="clearfix">
+                        <a data-noreload="true" href={"/edit/"+this.props.projectId} className="pull-right">
+                            &#x276e; &nbsp; All topics
+                        </a>
+                    </div>
                     {editForm}
                     <hr/>
                     {newForm}

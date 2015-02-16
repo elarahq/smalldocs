@@ -27,6 +27,25 @@
             app.dispatcher.unregister(this.dispatchToken);
         },
 
+        componentDidMount: function(){
+            if (this.state.active) {
+                app.dispatcher.dispatch({
+                    actionType: "change:page",
+                    pageId: this.props.page.id,
+                });
+            }
+        },
+
+        changeMarkdown: function(e){
+            e.preventDefault();
+
+            app.router.setRoute($(e.target).attr("href"));
+            app.dispatcher.dispatch({
+                actionType: "change:page",
+                pageId: this.props.page.id,
+            });
+        },
+
         render: function() {
             var page = this.props.page;
             var source = this.props.source;
@@ -34,7 +53,7 @@
             var cn = ["page", this.state.active ? "active" : ""].join(' ');
             return <div className={cn} data-page={page.id} data-name={page.name}>
                     <div className="page-text" data-page={page.id} data-name={page.name}>
-                        <a href={source} data-noreload="true">
+                        <a href={source} onClick={this.changeMarkdown}>
                             {page.title}
                         </a>
                     </div>

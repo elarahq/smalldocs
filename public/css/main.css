@@ -24,9 +24,9 @@ h4, h5, h6 {
 }
 
 pre.prettyprint {
-    padding: 0px;
+    padding: 10px;
     border: 0px;
-    font-size: 1.3em;
+    font-size: 11px;
 }
 
 pre.prettyprint > code {
@@ -93,41 +93,26 @@ pre.prettyprint > code {
     width: 100%;
 }
 
-/* Breadcrumb */
-.breadcrumb {
+/**
+ *  Editor
+ */
+.CodeMirror {
+    border: 1px solid #DDD;
+    font-size: 13px;
+}
+
+.markdown {
     font-size: 12px;
 }
 
-.breadcrumb ul {
-    height: 38px;
-    padding: 1px 10px;
-    background-color: #FFFFFF;
-    border: 1px solid #F5F5F5;
-    border-radius: 4px;
-    box-shadow: none;
-    box-sizing: border-box;
-    margin-bottom: 1.5rem;
+.markdown h1, h2, h3 {
+    font-size: 18px;
 }
 
-.breadcrumb > ul > li {
-    display: inline-block;
-    margin-top: 8px;
-    text-transform: capitalize;
+.markdown h4 {
+    font-size: 16px;
 }
 
-.breadcrumb > ul > li+li:before {
-    padding: 0 8px;
-    color: #AAA;
-    content: "/";
-}
-
-/* Blob Placeholder */
-.blob-placeholder {
-    text-align: center;
-    width: 100%;
-    padding: 30px 20px;
-    color: #CCCCCC;
-    font-size: 24px;
-    text-transform: capitalize;
-    letter-spacing: .1rem;
+.markdown h5, h6 {
+    font-size: 14px;
 }

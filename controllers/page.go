@@ -158,13 +158,14 @@ func SavePage(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, er
 		return 500, err
 	}
 
-	page, err := TopicById(ctx.Params["pageId"])
+	page, err := PageById(ctx.Params["pageId"])
 	if err != nil {
 		return 404, err
 	}
 
 	page.Title = utils.Title(userPage.Title)
 	page.Name = utils.Slug(userPage.Title)
+	page.Content = userPage.Content
 	if page.Name == "" {
 		return 412, fmt.Errorf("Invalid title for page!")
 	}
@@ -173,6 +174,7 @@ func SavePage(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, er
 	change := bson.M{"$set": bson.M{
 		"name":      page.Name,
 		"title":     page.Title,
+		"content":   page.Content,
 		"timestamp": time.Now().Unix(),
 	},
 	}

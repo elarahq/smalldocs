@@ -29,8 +29,6 @@
             var projectId = $("body").data("id");
 
             var topicUrl = this.props.source.replace("ID", projectId);
-            // Get TopicList component
-            var TopicList = app.TopicList;
 
             if (!this.state.currentProject) {
                 return <div></div>
@@ -38,13 +36,18 @@
 
             return <div>
                     <div className="col-sm-4 col-md-3">
-                        <TopicList source={topicUrl}
+                        <app.TopicList source={topicUrl}
                             projectName={this.state.currentProject}
                             topicName={this.state.currentTopic}
                             pageName={this.state.currentPage}
                             projectId={projectId}/>
                     </div>
                     <div className="col-sm-8 col-md-9">
+                        <app.Markdown
+                            projectName={this.state.currentProject}
+                            topicName={this.state.currentTopic}
+                            pageName={this.state.currentPage}
+                            projectId={projectId}/>
                     </div>
                 </div>;
         }
