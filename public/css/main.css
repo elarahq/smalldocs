@@ -53,18 +53,6 @@ pre.prettyprint > code {
 }
 
 /**
- * Directory view
- */
-.directory {
-    height: 100%;
-    border: 1px solid #F5F5F5;
-    font-size: 10px;
-    text-transform: lowercase;
-    text-transform: capitalize;
-}
-
-
-/**
  *  Topic list
  */
 .topic-list {

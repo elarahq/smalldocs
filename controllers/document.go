@@ -23,7 +23,7 @@ func DocumentIndex(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (in
 // Edit document index
 //
 func EditIndex(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	project, err := ProjectByName(ctx.Params["pname"])
+	project, err := ProjectById(ctx.Params["pname"])
 	if err != nil {
 		return 404, err
 	}

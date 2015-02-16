@@ -16,8 +16,8 @@
     var routes = {
         "/docs/:projectName": dispatchURL,
         "/docs/:projectName/:topicName/:pageName": dispatchURL,
-        "/edit/:projectName/:topicName/:": dispatchURL,
-        "/edit/:projectName/:topicName/:pageName": dispatchURL,
+        "/edit/:projectName": dispatchURL,
+        "/edit/:projectName/:topicName": dispatchURL,
         "/edit/:projectName/:topicName/:pageName": dispatchURL,
     };
 
@@ -29,7 +29,7 @@
     app.router.init();
 
     // No reload for links
-    $('#docs').on("click", "a[data-noreload]", function(event) {
+    $('body').on("click", "a[data-noreload]", function(event) {
         // Prevent default click action
         event.preventDefault();
         app.router.setRoute($(this).attr('href'));

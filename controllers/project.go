@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/jdkanani/goa"
@@ -111,10 +112,22 @@ func GetAllProjects(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (i
 }
 
 //
-// Get project by Id
+// Get project
 //
 func GetProject(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
-	project, err := ProjectById(ctx.Params["pid"])
+	isId, err := regexp.MatchString(`[A-Fa-f0-9]{24}`, ctx.Params["pid"])
+	if err != nil {
+		return 500, err
+	}
+
+	var project *models.Project
+
+	if isId {
+		project, err = ProjectById(ctx.Params["pid"])
+	} else {
+		project, err = ProjectByName(ctx.Params["pid"])
+	}
+
 	if err != nil {
 		return 404, err
 	}

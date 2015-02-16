@@ -14,6 +14,34 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
+// get topic by id
+func TopicById(id string) (*models.Topic, error) {
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+
+	var topic = new(models.Topic)
+	collection := session.DB(db).C("topics")
+	if err := collection.FindId(bson.ObjectIdHex(id)).One(topic); err != nil {
+		return nil, err
+	}
+	return topic, nil
+}
+
+//
+// Get topic
+//
+func GetTopic(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	topic, err := TopicById(ctx.Params["tid"])
+	if err != nil {
+		return 404, err
+	}
+
+	return 200, ctx.JSON(topic)
+}
+
 //
 // Get project topics
 //
@@ -56,8 +84,12 @@ func CheckTopic(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, 
 	name := utils.Slug(title)
 	collection := session.DB(db).C("topics")
 
+	fmt.Println(name)
 	var topic *models.Topic = new(models.Topic)
-	if err := collection.Find(bson.M{"name": name, "project": bson.ObjectIdHex(ctx.Params["pid"])}).One(topic); err == nil {
+	if err := collection.Find(bson.M{
+		"name":    name,
+		"project": bson.ObjectIdHex(ctx.Params["pid"]),
+	}).One(topic); err == nil {
 		if topic.ID.Hex() != id {
 			return 403, nil
 		}
@@ -104,6 +136,73 @@ func PostTopic(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, e
 	id := bson.NewObjectId()
 	topic.ID = id
 	if err := collection.Insert(topic); err != nil {
+		return 500, err
+	}
+
+	return 200, ctx.JSON(topic)
+}
+
+//
+// Save topic
+//
+func SaveTopic(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	userTopic := new(models.Topic)
+	if err := ctx.ReadJson(userTopic); err != nil {
+		return 500, err
+	}
+
+	topic, err := TopicById(ctx.Params["tid"])
+	if err != nil {
+		return 404, err
+	}
+
+	topic.Title = utils.Title(userTopic.Title)
+	topic.Name = utils.Slug(userTopic.Title)
+	if topic.Name == "" {
+		return 412, fmt.Errorf("Invalid title for topic!")
+	}
+
+	query := bson.M{"_id": topic.ID}
+	change := bson.M{"$set": bson.M{
+		"name":      topic.Name,
+		"title":     topic.Title,
+		"timestamp": time.Now().Unix(),
+	},
+	}
+
+	// get mongo database
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+	collection := session.DB(db).C("topics")
+	if err := collection.Update(query, change); err != nil {
+		fmt.Println(err)
+		return 500, err
+	}
+
+	return 200, ctx.JSON(topic)
+}
+
+//
+// Delete topic by id
+//
+func DeleteTopic(ctx *goa.Context, w http.ResponseWriter, r *http.Request) (int, error) {
+	topic, err := TopicById(ctx.Params["tid"])
+	if err != nil {
+		return 404, err
+	}
+
+	var db = context.Config.Get("db.database")
+
+	// get mongodb session
+	session := context.DBSession.Copy()
+	defer session.Close()
+
+	// remove project from collection
+	collection := session.DB(db).C("topics")
+	if err := collection.RemoveId(topic.ID); err != nil {
 		return 500, err
 	}
 
