@@ -2,7 +2,7 @@
   "name": "smalldocs",
   "version": "0.0.1",
   "authors": [
-    "Jaynti Kanani <jdkanani@gmail.com>"
+    "Jaynti Kanani <jayntibhai.kanani@housing.com>"
   ],
   "description": "Markdown documentation generator",
   "main": "main.go",
