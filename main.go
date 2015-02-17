@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jdkanani/smalldocs/config"
-	"github.com/jdkanani/smalldocs/context"
+	"github.com/loconsolutions/smalldocs/config"
+	"github.com/loconsolutions/smalldocs/context"
 
-	"github.com/jdkanani/smalldocs/controllers"
-	"github.com/jdkanani/smalldocs/models"
-	"github.com/jdkanani/smalldocs/utils"
+	"github.com/loconsolutions/smalldocs/controllers"
+	"github.com/loconsolutions/smalldocs/models"
+	"github.com/loconsolutions/smalldocs/utils"
 
 	"github.com/jdkanani/goa"
 

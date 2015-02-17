@@ -15,7 +15,7 @@ npm install -g react-tools
 ```
 - Finally, build and start
 ```bash
-cd $GO_WORKSPACE/src/github.com/jdkanani/smalldocs
+cd $GO_WORKSPACE/src/github.com/loconsolutions/smalldocs
 make install
 make build
 make start

@@ -4,7 +4,7 @@ import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 
-	"github.com/jdkanani/smalldocs/context"
+	"github.com/loconsolutions/smalldocs/context"
 )
 
 //

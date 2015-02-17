@@ -8,9 +8,9 @@ import (
 
 	"github.com/jdkanani/goa"
 
-	"github.com/jdkanani/smalldocs/context"
-	"github.com/jdkanani/smalldocs/models"
-	"github.com/jdkanani/smalldocs/utils"
+	"github.com/loconsolutions/smalldocs/context"
+	"github.com/loconsolutions/smalldocs/models"
+	"github.com/loconsolutions/smalldocs/utils"
 
 	"labix.org/v2/mgo/bson"
 )

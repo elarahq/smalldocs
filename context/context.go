@@ -1,7 +1,7 @@
 package context
 
 import (
-	"github.com/jdkanani/smalldocs/config"
+	"github.com/loconsolutions/smalldocs/config"
 	"labix.org/v2/mgo"
 )
 
