@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/loconsolutions/goa"
+	"github.com/jdkanani/goa"
 
 	"github.com/loconsolutions/smalldocs/context"
 	"github.com/loconsolutions/smalldocs/models"

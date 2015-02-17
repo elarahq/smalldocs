@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/loconsolutions/goa"
+	"github.com/jdkanani/goa"
 )
 
 //
